@@ -12696,6 +12696,10 @@ public class ESPlorer extends javax.swing.JFrame {
             log("Uploader: loaded fail!");
             return;
         }
+        if (mFile.get(mFileIndex).length() == 0) {
+            TerminalAdd("\r\nUploader: ERROR! " + UploadFileName + " has zero size.\r\n");
+            return;
+        }
         int lastPacketSize = SplitDataToPackets();
         if (lastPacketSize < 0) {
             log("Uploader: SplitDataToPackets fail!");
