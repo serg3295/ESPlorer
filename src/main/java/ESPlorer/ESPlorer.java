@@ -7705,8 +7705,9 @@ public class ESPlorer extends javax.swing.JFrame {
                         log("FileManager: File list found! Do parsing...");
                         try {
                             // parsing answer
+                            rx_data = rx_data.replaceAll("\r?\n", "\n");
                             int start = rx_data.indexOf("~~~File list START~~~");
-                            rx_data = rx_data.substring(start + 23, rx_data.indexOf("~~~File list END~~~"));
+                            rx_data = rx_data.substring(start + 22, rx_data.indexOf("~~~File list END~~~"));
                             //log(rx_data.replaceAll("\r?\n", "<CR+LF>\r\n"));
                             s = rx_data.split("\r?\n");
                             Arrays.sort(s);
