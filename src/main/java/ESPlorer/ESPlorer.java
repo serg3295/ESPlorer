@@ -6045,7 +6045,7 @@ public class ESPlorer extends javax.swing.JFrame {
         RightBigPaneLayout.setVerticalGroup(
             RightBigPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(RightBigPaneLayout.createSequentialGroup()
-                .addComponent(RightFilesSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 343, Short.MAX_VALUE)
+                .addComponent(RightFilesSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 813, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(RightSnippetsPane, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE))
         );
@@ -7705,8 +7705,9 @@ public class ESPlorer extends javax.swing.JFrame {
                         log("FileManager: File list found! Do parsing...");
                         try {
                             // parsing answer
+                            rx_data = rx_data.replaceAll("\r?\n", "\n");
                             int start = rx_data.indexOf("~~~File list START~~~");
-                            rx_data = rx_data.substring(start + 23, rx_data.indexOf("~~~File list END~~~"));
+                            rx_data = rx_data.substring(start + 22, rx_data.indexOf("~~~File list END~~~"));
                             //log(rx_data.replaceAll("\r?\n", "<CR+LF>\r\n"));
                             s = rx_data.split("\r?\n");
                             Arrays.sort(s);
@@ -12695,6 +12696,10 @@ public class ESPlorer extends javax.swing.JFrame {
             log("Uploader: loaded fail!");
             return;
         }
+        if (mFile.get(mFileIndex).length() == 0) {
+            TerminalAdd("\r\nUploader: ERROR! " + UploadFileName + " has zero size.\r\n");
+            return;
+        }
         int lastPacketSize = SplitDataToPackets();
         if (lastPacketSize < 0) {
             log("Uploader: SplitDataToPackets fail!");
@@ -12702,6 +12707,9 @@ public class ESPlorer extends javax.swing.JFrame {
         }
         log("sendPackets=" + Integer.toString(sendPackets.size()));
         String cmd = "_up=function(n,l,ll)\n"
+                + "     if node.chipmodel then\n"
+                + "          uart.start(0)\n"
+                + "     end\n"
                 + "     local cs = 0\n"
                 + "     local i = 0\n"
                 + "     local open = file.open or io.open\n"
@@ -12723,6 +12731,9 @@ public class ESPlorer extends javax.swing.JFrame {
                 + "               _up(1,ll,ll)\n"
                 + "          end\n"
                 + "          end,0)\n"
+                + "end\n"
+                + "if node.chipmodel then\n"
+                + "    uart.stop(0)\n"
                 + "end\n"
                 + "file.remove(\"" + UploadFileName + "\")\n";
         sendBuf = cmdPrep(cmd);
