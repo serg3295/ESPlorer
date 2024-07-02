@@ -12707,9 +12707,6 @@ public class ESPlorer extends javax.swing.JFrame {
         }
         log("sendPackets=" + Integer.toString(sendPackets.size()));
         String cmd = "_up=function(n,l,ll)\n"
-                + "     if node.chipmodel then\n"
-                + "          uart.start(0)\n"
-                + "     end\n"
                 + "     local cs = 0\n"
                 + "     local i = 0\n"
                 + "     local open = file.open or io.open\n"
@@ -12733,7 +12730,7 @@ public class ESPlorer extends javax.swing.JFrame {
                 + "          end,0)\n"
                 + "end\n"
                 + "if node.chipmodel then\n"
-                + "    uart.stop(0)\n"
+                + "    uart.start(0)\n"
                 + "end\n"
                 + "file.remove(\"" + UploadFileName + "\")\n";
         sendBuf = cmdPrep(cmd);
@@ -12935,7 +12932,7 @@ public class ESPlorer extends javax.swing.JFrame {
                 }
                 if (j >= (sendBuf.size() + sendPackets.size())) {
                     LocalEcho = false;
-                    send(addCR("_up=nil"), false);
+                    send(addCR("_up=nil if node.chipmodel then uart.stop(0)end"), false);
                     try {
                         timer.stop();
                     } catch (Exception e) {
